@@ -1,8 +1,12 @@
 from Cell import randint, seed, Cell, Grid, LEVEL, SCALING, ROW_COUNT, COLUMN_COUNT, WIDTH, HEIGHT, \
     MARGIN, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, arcade
+from datetime import datetime
+from pathlib import Path
 
 # Set the seed of the random
-seed(0)
+seed(datetime.now())
+
+path = Path(Path(__file__).parent.parent, 'Resources')
 
 
 class PratoFiorito(arcade.Window):
@@ -38,7 +42,7 @@ class PratoFiorito(arcade.Window):
             for row in range(ROW_COUNT):
                 x = row * (WIDTH + MARGIN) + (WIDTH / 2 + MARGIN)
                 y = column * (HEIGHT + MARGIN) + (HEIGHT / 2 + MARGIN)
-                sprite = arcade.Sprite('/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_9.png', SCALING)
+                sprite = arcade.Sprite(Path(path, 'sprite_9.png'), SCALING)
                 sprite.center_x = x
                 sprite.center_y = y
                 self.grid_sprite_list.append(sprite)
@@ -53,26 +57,26 @@ class PratoFiorito(arcade.Window):
                 if self.Grid.grid[column][row].revealed is False:
                     if self.Grid.grid[column][row].marked:
                         self.grid_sprite_list[pos].texture = arcade.load_texture(
-                            '/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_13.png'
+                            Path(path, 'sprite_13.png')
                         )
                     elif self.Grid.grid[column][row].unsure:
                         self.grid_sprite_list[pos].texture = arcade.load_texture(
-                            '/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_12.png'
+                            Path(path, 'sprite_12.png')
                         )
                     else:
                         self.grid_sprite_list[pos].texture = arcade.load_texture(
-                            '/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_9.png'
+                            Path(path, 'sprite_9.png')
                         )
                 elif self.Grid.grid[column][row].revealed is True:
                     if self.Grid.grid[column][row].is_bomb is True:
                         self.grid_sprite_list[pos].texture = arcade.load_texture(
-                            '/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_11.png'
+                            Path(path, 'sprite_11.png')
                         )
                     else:
                         num = 10 if self.Grid.grid[column][row].neighboring_bombs == 0 \
                             else self.Grid.grid[column][row].neighboring_bombs
                         self.grid_sprite_list[pos].texture = arcade.load_texture(
-                            f'/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_{num}.png'
+                            Path(path, f'sprite_{num}.png')
                         )
 
     def on_draw(self):
