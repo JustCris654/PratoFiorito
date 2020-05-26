@@ -1,5 +1,6 @@
 import arcade
 from random import seed, randint
+from SetupGame import *
 
 seed(0)
 
@@ -14,11 +15,6 @@ class Cell(object):
         self.marked = False
         # Number of neighboring bombs
         self.neighboring_bombs = None
-
-        # Variables for the rendering
-        self.scaling = scaling
-        self.column = column
-        self.row = row
 
 
 class Grid(object):
@@ -40,5 +36,23 @@ class Grid(object):
                 self.grid[column_bomb][row_bomb].is_bomb = True
                 i += 1
 
-    def count_neighbours(self):
-        pass
+    def reveal_cell(self, column, row):
+        self.grid[column][row].revealed = True
+
+    def count_neighbours(self, column, row):
+        # Se la cella stessa è una bomba restituisco falso
+        if self.grid[column][row].is_bomb is True:
+            return None
+
+        # Conto le bombe adiacenti alla casella
+        total = 0
+        for i in range(-1, 2):
+            for k in range(-1, 2):
+                pos_x = column + i
+                pos_y = row + k
+                if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                    if self.grid[pos_x][pos_y].is_bomb is True:
+                        total += 1
+
+        # Assegno il valore di bombe adiacenti al parametro
+        self.grid[column][row].neighboring_bombs = total
