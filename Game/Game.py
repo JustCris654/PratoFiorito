@@ -1,5 +1,5 @@
-from Cell import *
-
+from Cell import randint, seed, Cell, Grid, LEVEL, SCALING, ROW_COUNT, COLUMN_COUNT, WIDTH, HEIGHT, \
+    MARGIN, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, arcade
 
 # Set the seed of the random
 seed(0)
@@ -51,16 +51,25 @@ class PratoFiorito(arcade.Window):
                 # monodimensionale, per esempio righa 3 e colonna 7 sarà mappata su 37
                 pos = row * COLUMN_COUNT + column
                 if self.Grid.grid[column][row].revealed is False:
-                    self.grid_sprite_list[pos].texture = arcade.load_texture(
-                        '/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_9.png'
-                    )
+                    if self.Grid.grid[column][row].marked:
+                        self.grid_sprite_list[pos].texture = arcade.load_texture(
+                            '/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_13.png'
+                        )
+                    elif self.Grid.grid[column][row].unsure:
+                        self.grid_sprite_list[pos].texture = arcade.load_texture(
+                            '/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_12.png'
+                        )
+                    else:
+                        self.grid_sprite_list[pos].texture = arcade.load_texture(
+                            '/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_9.png'
+                        )
                 elif self.Grid.grid[column][row].revealed is True:
                     if self.Grid.grid[column][row].is_bomb is True:
                         self.grid_sprite_list[pos].texture = arcade.load_texture(
                             '/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_11.png'
                         )
                     else:
-                        num = 10 if self.Grid.grid[column][row].neighboring_bombs is 0 \
+                        num = 10 if self.Grid.grid[column][row].neighboring_bombs == 0 \
                             else self.Grid.grid[column][row].neighboring_bombs
                         self.grid_sprite_list[pos].texture = arcade.load_texture(
                             f'/home/justcris/PycharmProjects/Prato_Fiorito/Resources/sprite_{num}.png'
@@ -75,6 +84,7 @@ class PratoFiorito(arcade.Window):
         # Change the x/y screen coordinates to grid coordinates
         column = int(x // (WIDTH + MARGIN))
         row = int(y // (HEIGHT + MARGIN))
+        print(button)
 
         print(
             f'Click coordinates: ({x}, {y}). '
@@ -85,9 +95,20 @@ class PratoFiorito(arcade.Window):
         # Make sure we are on-grid. It is possible to click in the upper right
         # corner in the margin and go to a grid location that doesn't exist
         if column < COLUMN_COUNT and row < ROW_COUNT:
-            self.Grid.reveal_cell(column, row)
+            if button == arcade.MOUSE_BUTTON_LEFT:
+                if self.Grid.reveal_cell(column, row) is False:
+                    self.game_over()
+            elif button == arcade.MOUSE_BUTTON_RIGHT:
+                self.Grid.grid[column][row].unsure = False
+                self.Grid.grid[column][row].marked = not self.Grid.grid[column][row].marked
+            elif button == arcade.MOUSE_BUTTON_MIDDLE:
+                self.Grid.grid[column][row].marked = False
+                self.Grid.grid[column][row].unsure = not self.Grid.grid[column][row].unsure
 
         self.resync_grid_with_sprites()
+
+    def game_over(self):
+        self.Grid.reveal_all()
 
 
 def main():

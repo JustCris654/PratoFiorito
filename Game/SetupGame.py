@@ -1,5 +1,5 @@
 # Set the level to play and the scaling of the sprites
-LEVEL: int = 1
+LEVEL: int = 2
 SCALING = 1 if LEVEL == 2 else 2 if LEVEL == 1 else 0.67
 
 # Set how many rows and columns we will have

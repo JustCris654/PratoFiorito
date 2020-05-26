@@ -11,10 +11,12 @@ class Cell(object):
         self.is_bomb = is_bomb
         # True if the cell is revealed, false otherwise
         self.revealed = False
-        # True if the cell is marked
-        self.marked = False
         # Number of neighboring bombs
         self.neighboring_bombs = None
+        # Unsure
+        self.unsure = False
+        # True if the cell is marked
+        self.marked = False
 
 
 class Grid(object):
@@ -39,6 +41,59 @@ class Grid(object):
     def reveal_cell(self, column, row):
         self.grid[column][row].revealed = True
 
+        if self.grid[column][row].is_bomb:
+            return False
+
+        if self.grid[column][row].neighboring_bombs == 0:
+
+            pos_x = column - 1
+            pos_y = row
+            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                if self.grid[pos_x][pos_y].revealed is False:
+                    self.reveal_cell(pos_x, pos_y)
+
+            pos_x = column + 1
+            pos_y = row
+            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                if self.grid[pos_x][pos_y].revealed is False:
+                    self.reveal_cell(pos_x, pos_y)
+
+            pos_x = column
+            pos_y = row - 1
+            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                if self.grid[pos_x][pos_y].revealed is False:
+                    self.reveal_cell(pos_x, pos_y)
+
+            pos_x = column
+            pos_y = row + 1
+            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                if self.grid[pos_x][pos_y].revealed is False:
+                    self.reveal_cell(pos_x, pos_y)
+
+            pos_x = column - 1
+            pos_y = row + 1
+            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                if self.grid[pos_x][pos_y].revealed is False:
+                    self.reveal_cell(pos_x, pos_y)
+
+            pos_x = column - 1
+            pos_y = row - 1
+            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                if self.grid[pos_x][pos_y].revealed is False:
+                    self.reveal_cell(pos_x, pos_y)
+
+            pos_x = column + 1
+            pos_y = row - 1
+            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                if self.grid[pos_x][pos_y].revealed is False:
+                    self.reveal_cell(pos_x, pos_y)
+
+            pos_x = column + 1
+            pos_y = row + 1
+            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                if self.grid[pos_x][pos_y].revealed is False:
+                    self.reveal_cell(pos_x, pos_y)
+
     def count_neighbours(self, column, row):
         # Se la cella stessa è una bomba restituisco falso
         if self.grid[column][row].is_bomb is True:
@@ -56,3 +111,8 @@ class Grid(object):
 
         # Assegno il valore di bombe adiacenti al parametro
         self.grid[column][row].neighboring_bombs = total
+
+    def reveal_all(self):
+        for i in self.grid:
+            for k in i:
+                k.revealed = True
