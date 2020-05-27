@@ -1,7 +1,8 @@
-from Cell import randint, seed, Cell, Grid, LEVEL, SCALING, ROW_COUNT, COLUMN_COUNT, WIDTH, HEIGHT, \
-    MARGIN, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, arcade
-from datetime import datetime
+from Cell import *
+from datetime import datetime, timedelta
 from pathlib import Path
+from SetupGame import UiDialog, start_ui
+from Label import LabelDialog, label_win, label_lose
 
 # Set the seed of the random
 seed(datetime.now())
@@ -9,11 +10,30 @@ seed(datetime.now())
 path = Path(Path(__file__).parent.parent, 'Resources')
 
 
-class PratoFiorito(arcade.Window):
-    def __init__(self):
 
+class PratoFiorito(arcade.Window):
+    def __init__(self, level):
+        self.level = level
+        self.scaling = 1 if self.level == 2 else 2 if self.level == 1 else 0.67
+
+        # Set how many rows and columns we will have
+        self.row_count = 5 * self.level
+        self.column_count = 5 * self.level
+
+        # This sets the WIDTH and HEIGHT of each grid location
+        self.cell_width = int(48 * self.scaling)
+        self.cell_height = int(50 * self.scaling)
+
+        # This sets the margin between each cell
+        # and on the edges of the screen.
+        self.margin = 2 * self.scaling
+
+        # Do the math to figure out our screen dimensions
+        self.screen_width: int = int((self.cell_width + self.margin) * self.column_count + self.margin)
+        self.screen_height: int = int((self.cell_height + self.margin) * self.row_count + self.margin)
+        self.screen_title: str = "Prato fiorito"
         # Start the app
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        super().__init__(self.screen_width, self.screen_height, self.screen_title)
 
         # Create a 2 dim array for store the grid
         self.grid = []  # 0 == undiscovered, 1 == discovered, 3 == undiscovered bomb, 4 == discovered bomb -> game ends
@@ -25,35 +45,35 @@ class PratoFiorito(arcade.Window):
         self.Grid: Grid = None
 
     def setup(self):
-
-        # Create the object grid
-        self.Grid = Grid(COLUMN_COUNT, ROW_COUNT, SCALING)
-        # Call the generate_bombs function to generate randomly the bombs
-        self.Grid.generate_bombs(LEVEL)
         # Conta le bombe adiacenti per tutte le caselle
-        for i in range(COLUMN_COUNT):
-            for k in range(ROW_COUNT):
+        # Create the object grid
+        self.Grid = Grid(self.column_count, self.row_count)
+        # Call the generate_bombs function to generate randomly the bombs
+        self.Grid.generate_bombs(self.level)
+        # Conta le bombe adiacenti per tutte le caselle
+        for i in range(self.column_count):
+            for k in range(self.row_count):
                 self.Grid.count_neighbours(i, k)
 
         self.grid_sprite_list = arcade.SpriteList()
 
         # Create a list of sprites to represent each grid location
-        for column in range(COLUMN_COUNT):
-            for row in range(ROW_COUNT):
-                x = row * (WIDTH + MARGIN) + (WIDTH / 2 + MARGIN)
-                y = column * (HEIGHT + MARGIN) + (HEIGHT / 2 + MARGIN)
-                sprite = arcade.Sprite(Path(path, 'sprite_9.png'), SCALING)
+        for column in range(self.column_count):
+            for row in range(self.row_count):
+                x = row * (self.cell_width + self.margin) + (self.cell_width / 2 + self.margin)
+                y = column * (self.cell_height + self.margin) + (self.cell_height / 2 + self.margin)
+                sprite = arcade.Sprite(Path(path, 'sprite_9.png'), self.scaling)
                 sprite.center_x = x
                 sprite.center_y = y
                 self.grid_sprite_list.append(sprite)
 
     def resync_grid_with_sprites(self):
         # self.shape_list = arcade.ShapeElementList()
-        for row in range(ROW_COUNT):
-            for column in range(COLUMN_COUNT):
+        for row in range(self.row_count):
+            for column in range(self.column_count):
                 # In questa parte lavoro monodimensionalmente quindi devo convertire la grid bidimensionale in
                 # monodimensionale, per esempio righa 3 e colonna 7 sarà mappata su 37
-                pos = row * COLUMN_COUNT + column
+                pos = row * self.column_count + column
                 if self.Grid.grid[column][row].revealed is False:
                     if self.Grid.grid[column][row].marked:
                         self.grid_sprite_list[pos].texture = arcade.load_texture(
@@ -86,8 +106,8 @@ class PratoFiorito(arcade.Window):
 
     def on_mouse_press(self, x, y, button, modifiers):
         # Change the x/y screen coordinates to grid coordinates
-        column = int(x // (WIDTH + MARGIN))
-        row = int(y // (HEIGHT + MARGIN))
+        column = int(x // (self.cell_width + self.margin))
+        row = int(y // (self.cell_height + self.margin))
         print(button)
 
         print(
@@ -98,7 +118,7 @@ class PratoFiorito(arcade.Window):
 
         # Make sure we are on-grid. It is possible to click in the upper right
         # corner in the margin and go to a grid location that doesn't exist
-        if column < COLUMN_COUNT and row < ROW_COUNT:
+        if column < self.column_count and row < self.row_count:
             if button == arcade.MOUSE_BUTTON_LEFT:
                 if self.Grid.reveal_cell(column, row) is False:
                     self.game_over()
@@ -116,12 +136,9 @@ class PratoFiorito(arcade.Window):
 
 
 def main():
-    game_window = PratoFiorito()
+    level = start_ui()
+    game_window = PratoFiorito(level)
     game_window.setup()
-    for i in range(ROW_COUNT):
-        for k in range(COLUMN_COUNT):
-            print(f'{0 if game_window.Grid.grid[i][k].is_bomb else 1} | ', end='')
-        print('')
     arcade.run()
 
 

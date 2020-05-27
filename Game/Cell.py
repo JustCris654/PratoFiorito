@@ -6,7 +6,7 @@ seed(0)
 
 
 class Cell(object):
-    def __init__(self, is_bomb, scaling, column, row):
+    def __init__(self, is_bomb, column, row):
         # True if the cell is a bomb, false otherwise
         self.is_bomb = is_bomb
         # True if the cell is revealed, false otherwise
@@ -20,11 +20,11 @@ class Cell(object):
 
 
 class Grid(object):
-    def __init__(self, column_count, row_count, scaling):
+    def __init__(self, column_count, row_count):
         self.grid_sprite_list = arcade.SpriteList()
         self.row_count = row_count
         self.column_count = column_count
-        self.grid = [[Cell(False, scaling, row, column) for row in range(self.row_count)]
+        self.grid = [[Cell(False, column, row) for row in range(self.row_count)]
                      for column in range(self.column_count)]
 
     def generate_bombs(self, level):
@@ -48,49 +48,49 @@ class Grid(object):
 
             pos_x = column - 1
             pos_y = row
-            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+            if 0 <= pos_x < self.column_count and 0 <= pos_y < self.row_count:
                 if self.grid[pos_x][pos_y].revealed is False:
                     self.reveal_cell(pos_x, pos_y)
 
             pos_x = column + 1
             pos_y = row
-            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+            if 0 <= pos_x < self.column_count and 0 <= pos_y < self.row_count:
                 if self.grid[pos_x][pos_y].revealed is False:
                     self.reveal_cell(pos_x, pos_y)
 
             pos_x = column
             pos_y = row - 1
-            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+            if 0 <= pos_x < self.column_count and 0 <= pos_y < self.row_count:
                 if self.grid[pos_x][pos_y].revealed is False:
                     self.reveal_cell(pos_x, pos_y)
 
             pos_x = column
             pos_y = row + 1
-            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+            if 0 <= pos_x < self.column_count and 0 <= pos_y < self.row_count:
                 if self.grid[pos_x][pos_y].revealed is False:
                     self.reveal_cell(pos_x, pos_y)
 
             pos_x = column - 1
             pos_y = row + 1
-            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+            if 0 <= pos_x < self.column_count and 0 <= pos_y < self.row_count:
                 if self.grid[pos_x][pos_y].revealed is False:
                     self.reveal_cell(pos_x, pos_y)
 
             pos_x = column - 1
             pos_y = row - 1
-            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+            if 0 <= pos_x < self.column_count and 0 <= pos_y < self.row_count:
                 if self.grid[pos_x][pos_y].revealed is False:
                     self.reveal_cell(pos_x, pos_y)
 
             pos_x = column + 1
             pos_y = row - 1
-            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+            if 0 <= pos_x < self.column_count and 0 <= pos_y < self.row_count:
                 if self.grid[pos_x][pos_y].revealed is False:
                     self.reveal_cell(pos_x, pos_y)
 
             pos_x = column + 1
             pos_y = row + 1
-            if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+            if 0 <= pos_x < self.column_count and 0 <= pos_y < self.row_count:
                 if self.grid[pos_x][pos_y].revealed is False:
                     self.reveal_cell(pos_x, pos_y)
 
@@ -105,7 +105,7 @@ class Grid(object):
             for k in range(-1, 2):
                 pos_x = column + i
                 pos_y = row + k
-                if 0 <= pos_x < COLUMN_COUNT and 0 <= pos_y < ROW_COUNT:
+                if 0 <= pos_x < self.column_count and 0 <= pos_y < self.row_count:
                     if self.grid[pos_x][pos_y].is_bomb is True:
                         total += 1
 
@@ -116,3 +116,4 @@ class Grid(object):
         for i in self.grid:
             for k in i:
                 k.revealed = True
+        return True

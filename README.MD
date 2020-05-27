@@ -12,6 +12,7 @@ git clone <this repo>
 cd PratoFiorito
 python -m venv venv
 venv/bin/pip install arcade
+venv/bin/pip install PyQt5
 venv/bin/python Game/Game.py
 ```
 
