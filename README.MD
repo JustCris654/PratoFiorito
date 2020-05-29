@@ -3,8 +3,9 @@
 Prato fiorito in python 
 
 ## Requirements
-* Python 3
+* Python 3.7 or later 
 * Python Arcade Library
+* OpenGL 3.3 or later (arcade dependency)
 
 ## Launch the game
 ```
