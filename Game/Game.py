@@ -2,7 +2,7 @@ from Cell import *
 from datetime import datetime, timedelta
 from pathlib import Path
 from SetupGame import UiDialog, start_ui
-from Label import LabelDialog, label_win, label_lose
+# from Label import LabelDialog, label_win, label_lose
 import arcade
 
 # Set the seed of the random
